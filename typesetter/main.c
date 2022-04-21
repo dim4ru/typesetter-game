@@ -27,24 +27,58 @@ char startGame(){
     printf("Случанйое слово: %s\n",getRandomWord());    // *Вывод рандомного слова
     printf("Введите слово: ");
     char playerInput[50]={0};                           // *Строка для ввода слова игроком
-    scanf("%s\0",playerInput);                          // ⚠️ При стирании символы запоминаются
+    scanf("%s\0",playerInput);                          // [!] Проверка на пустую строку
     printf("Вы ввели слово: %s\n",playerInput);
     //checkInput(playerInput);
-    //Это перенести в checkInput:
     
+    
+    
+    // Это перенести в checkInput:
+    
+    // Сравнение букв в playerInput с буквами randomWord
+    int isCorrect;                                      // [?] int вместо bool
     for(int i=0; playerInput[i]; i++){
         //printf("[%d]=%c\n",i, playerInput[i]);        // (Посимвольный вывод playerInput)
-        if(strchr(/*getRandomWord()*/randomWord,playerInput[i])){  // ⚠️ Чувствителен к регистру | Поиск (в строке, символа)
-            printf("%c – подходит!\n",playerInput[i]);  // Покрасить вывод
+        if(!strchr(/*getRandomWord()*/randomWord,playerInput[i])){  // ⚠️ Чувствителен к регистру, капсить все слова | Поиск (в строке, символа)
+            printf("В слове %s не содержится буква %c или их количество меньше использованного\n",randomWord,playerInput[i]);
+            isCorrect = 0;
+            break;
         }
         else{
-            printf("[!] В слове %s не содержится буква %c\n",randomWord,playerInput[i]);
+            isCorrect = 1;
         }
     }
+    if(isCorrect==0){
+        printf("[-] %s не подходит\n",playerInput);
+    }
+    else{
+        //Проверка существования слова
+        printf("Ищем слово в словаре...\n");
+        FILE *vocabulary;
+        vocabulary = fopen("/Users/dmitry/Desktop/ОмГУПС/typesetter/russian.txt","r"); //[!]Сделать относительный путь
+        char vocabularyStr[50];
+        int isFound = 0;
+        while (fgets(vocabularyStr,50,vocabulary)) {
+            if(strstr(vocabularyStr,playerInput)){              // ⚠️⚠️⚠️ Не сравнивает слово полностью, подходит даже 1 буква
+                //printf("[+] %s – подходит!\n",playerInput);
+                isFound = 1;
+                break;
+            }
+        }
+        if (isFound==1){
+            printf("Нашлось\n");
+        }
+        else{
+            printf("Не нашлось\n");
+        }
+        fclose(vocabulary);
+    }
+    
 }
 
 void main() {
     //setlocale(LC_ALL, "Russian");
+    //char vocabularyPath[60] = {"/Users/dmitry/Desktop/ОмГУПС/typesetter/russian.txt"};  // [!] Путь к файлу в переменную
     srand(time(NULL));
     startGame();
 }
