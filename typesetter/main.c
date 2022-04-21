@@ -59,14 +59,14 @@ char startGame(){
         char vocabularyStr[50];
         int isFound = 0;
         while (fgets(vocabularyStr,50,vocabulary)) {
-            if(strstr(vocabularyStr,playerInput)){              // ⚠️⚠️⚠️ Не сравнивает слово полностью, подходит даже 1 буква
+            if(strcmp(vocabularyStr,playerInput)==0){              // ⚠️⚠️⚠️ Не сравнивает слово полностью, подходит даже 1 буква
                 //printf("[+] %s – подходит!\n",playerInput);
                 isFound = 1;
                 break;
             }
         }
         if (isFound==1){
-            printf("Нашлось\n");
+            printf("%s Нашлось\n",vocabularyStr);
         }
         else{
             printf("Не нашлось\n");
