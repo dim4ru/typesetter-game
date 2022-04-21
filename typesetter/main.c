@@ -27,7 +27,7 @@ char startGame(){
     printf("Случанйое слово: %s\n",getRandomWord());    // *Вывод рандомного слова
     printf("Введите слово: ");
     char playerInput[50]={0};                           // *Строка для ввода слова игроком
-    scanf("%s\0",playerInput);                          // [!] Проверка на пустую строку
+    scanf("%s",&playerInput);                           // [!] Проверка на пустую строку
     printf("Вы ввели слово: %s\n",playerInput);
     //checkInput(playerInput);
     
@@ -40,7 +40,7 @@ char startGame(){
     for(int i=0; playerInput[i]; i++){
         //printf("[%d]=%c\n",i, playerInput[i]);        // (Посимвольный вывод playerInput)
         if(!strchr(/*getRandomWord()*/randomWord,playerInput[i])){  // ⚠️ Чувствителен к регистру, капсить все слова | Поиск (в строке, символа)
-            printf("В слове %s не содержится буква %c или их количество меньше использованного\n",randomWord,playerInput[i]);
+            printf("В слове %s не содержится буква %c или их количество меньше использованного\n",randomWord,playerInput[i]); // Изменить формат вывода
             isCorrect = 0;
             break;
         }
@@ -56,20 +56,22 @@ char startGame(){
         printf("Ищем слово в словаре...\n");
         FILE *vocabulary;
         vocabulary = fopen("/Users/dmitry/Desktop/ОмГУПС/typesetter/russian.txt","r"); //[!]Сделать относительный путь
-        char vocabularyStr[50];
+        char vocabularyStr[50];                         // *Строка из словаря
         int isFound = 0;
-        while (fgets(vocabularyStr,50,vocabulary)) {
-            if(strcmp(vocabularyStr,playerInput)==0){              // ⚠️⚠️⚠️ Не сравнивает слово полностью, подходит даже 1 буква
-                //printf("[+] %s – подходит!\n",playerInput);
-                isFound = 1;
+        while (fgets(vocabularyStr,50,vocabulary)) {    // *Запись в vocabularyStr строки из vocabulary(файла)
+            printf("%s",vocabularyStr);                 // ⚠️⚠️⚠️ Считывает строки из файла вместе с крансой строкой после слова => при сравнеии слова получаются разные => проверка всегда false
+            if(strcmp(vocabularyStr,playerInput)==0){   // *Сравнение слов, если идентичны, то возвращается 0
+                printf("[+] %s – подходит!\n",playerInput);
+                isFound++;
                 break;
             }
         }
-        if (isFound==1){
-            printf("%s Нашлось\n",vocabularyStr);
+        if (isFound){
+            printf("%s Нашлось\n",vocabularyStr);       // *Слово существует в словаре
         }
         else{
-            printf("Не нашлось\n");
+            printf("Не нашлось\n");                     // *Слово не существует в словаре
+            printf("isFound?[%d], scrcmp=[%d], lastVocStr=[%s], input=[%s]\n",isFound, strcmp(vocabularyStr,playerInput),vocabularyStr,playerInput);
         }
         fclose(vocabulary);
     }
