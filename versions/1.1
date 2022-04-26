@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+void getRandomWord(){
+    char str[50];                           // Слово из словаря [длина слова]
+    FILE *vocabulary;                       // Подключение файла
+    /*int randNum = rand();
+    printf("(((%d)))\n",randNum);*/
+    //setlocale(LC_ALL, "Russian");
+    vocabulary = fopen("/Users/dmitry/Desktop/ОмГУПС/typesetter/russian.txt","r"); //Сделать относительный путь
+    fseek(vocabulary, rand()%9132547, SEEK_SET);    // Перемещение указателя на случайное количество байт
+    if (NULL != fgets(str, 100, vocabulary)){
+        fscanf(vocabulary, "%s",&str);      // Чтение строки
+        printf("%s\n",str);                 // Печать слова
+
+    }
+    fclose(vocabulary);                     // Закрытие потока
+}
+
+int main() {
+    srand(time(NULL));
+    getRandomWord();
+}

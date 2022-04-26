@@ -1,0 +1,11 @@
+int getSymbleCount(){    // Подсчет символов для rand в fseek (34.993.899 вместо 16.732.454)
+    FILE *vocabulary;
+    vocabulary = fopen("/Users/dmitry/Desktop/ОмГУПС/typesetter/russian.txt","r");
+    int symbleCount;
+    while (fgetc(vocabulary) != EOF){
+        symbleCount++;
+    }
+    printf("%d---",symbleCount);
+    fclose(vocabulary);
+    return 0;
+}

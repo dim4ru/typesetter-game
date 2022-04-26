@@ -1,0 +1,16 @@
+#include <stdio.h>
+//#include <conio.h>
+//#include <iostream>
+
+int main() {
+    char str[100];
+    int wordId = 1;
+    FILE *vocabulary;
+    //setlocale(LC_ALL, "Russian");
+    vocabulary = fopen("/Users/dmitry/Desktop/ОмГУПС/typesetter/russian.txt","r"); //Сделать относительный путь
+    if (fgets( str, wordId, vocabulary)){
+        fscanf(vocabulary, "%s",&str);
+    }
+    printf("%s\n",str);
+    fclose(vocabulary);
+}

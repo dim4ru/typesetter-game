@@ -1,0 +1,20 @@
+#include <stdio.h>
+//#include <conio.h>
+//#include <iostream>
+
+void getVocabularyWord(str){
+    
+}
+
+int main() {
+    char str[50];       // Слово из словаря [длина слова]
+    int wordId = 1;     // ID слова для рендомной выборки
+    FILE *vocabulary;   // Подключение файла
+    //setlocale(LC_ALL, "Russian");
+    vocabulary = fopen("/Users/dmitry/Desktop/ОмГУПС/typesetter/russian.txt","r"); //Сделать относительный путь
+    if (fgets(str, 1, vocabulary)){
+        fscanf(vocabulary, "%s",&str);
+    }
+    printf("%s\n",str); // Печать слова
+    fclose(vocabulary); // Закрытие потока
+}
