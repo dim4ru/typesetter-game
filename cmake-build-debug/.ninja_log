@@ -1,0 +1,15 @@
+# ninja log v5
+2	90	1651666214884951066	CMakeFiles/typesetter.dir/typesetter/main.c.o	c2af8e42a2e416a2
+91	168	1651666214963463720	typesetter	7d35ca9efd84c1d
+1	208	1651666766308468211	CMakeFiles/typesetter.dir/typesetter/main.c.o	c2af8e42a2e416a2
+208	288	1651666766388193545	typesetter	7d35ca9efd84c1d
+3	195	1651667065716066620	CMakeFiles/typesetter.dir/typesetter/main.c.o	c2af8e42a2e416a2
+196	325	1651667065847532087	typesetter	7d35ca9efd84c1d
+1	130	1651667815072859447	CMakeFiles/typesetter.dir/typesetter/main.c.o	c2af8e42a2e416a2
+131	228	1651667815172238396	typesetter	7d35ca9efd84c1d
+0	119	1651669505059321982	CMakeFiles/typesetter.dir/typesetter/main.c.o	c2af8e42a2e416a2
+120	187	1651669505129690187	typesetter	7d35ca9efd84c1d
+1	78	1651670948514725732	CMakeFiles/typesetter.dir/typesetter/main.c.o	c2af8e42a2e416a2
+78	151	1651670948587564154	typesetter	7d35ca9efd84c1d
+0	114	1651671267619038289	CMakeFiles/typesetter.dir/typesetter/main.c.o	c2af8e42a2e416a2
+114	216	1651671267723555068	typesetter	7d35ca9efd84c1d
