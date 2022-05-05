@@ -1,4 +1,4 @@
-//cp866 кодировку использовать
+//Для вывода %c CP866 в терминале или setlocale()
 //только последнее слово в словаре
 //getRandomWord в переменную в checkInput
 //чувствительность к регистру
@@ -37,7 +37,7 @@ char checkInput(char* playerInput, char* randomWord){
     // Сравнение букв в playerInput с буквами randomWord
     int isCorrect = 1;
     for(int i=0; playerInput[i]; i++){
-        printf("[%d]=%c\n",i, playerInput[i]);          // (Посимвольный вывод playerInput) // ??
+        //printf("[%d]=%c\n",i, playerInput[i]);        // (Посимвольный вывод playerInput) // ??
         if(!strchr(/*getRandomWord()*/randomWord,playerInput[i])){  // [!] Чувствителен к регистру, капсить все слова | Поиск (в строке, символа)
             printf("В слове %s не содержится буква %c\n",randomWord,playerInput[i]); // Изменить формат вывода
             isCorrect = 0;
@@ -56,27 +56,26 @@ char checkInput(char* playerInput, char* randomWord){
         int isFound = 0;
         while (fgets(vocabularyStr,50,vocabulary)) {    // *Запись в vocabularyStr строки из vocabulary(файла)
             //printf("%s",vocabularyStr);               // ?????? Считывает строки из файла вместе с крансой строкой после слова => при сравнеии слова получаются разные => проверка всегда false
-            if(strcmp(vocabularyStr,playerInput)==0){   // *Сравнение слов, если идентичны, то возвращается 0
-                printf("[+] %s – подходит!\n",playerInput);
+            if(strcmp(playerInput, vocabularyStr)==0){   // *Сравнение слов, если идентичны, то возвращается 0
                 isFound++;
                 break;
             }
         }
-        /*if (isFound){
-            printf("%s Нашлось\n",vocabularyStr);       // *Слово существует в словаре
+        if (isFound==0){
+            printf("Слово %s не найдено в словаре\n",playerInput);
+            printf("isFound=[%d], scrcmp=[%d], последнее обработанное слово=[%s], input=[%s]\n",isFound, strcmp(vocabularyStr,playerInput),vocabularyStr,playerInput);
+        } else{
+            printf("[+] %s – подходит!\n",playerInput);
+            printf("isFound=[%d], scrcmp=[%d], последнее обработанное слово=[%s], input=[%s]\n",isFound, strcmp(vocabularyStr,playerInput),vocabularyStr,playerInput);
         }
-        else{
-            printf("Не нашлось\n");                     // *Слово не существует в словаре
-            //printf("isFound?[%d], scrcmp=[%d], lastVocStr=[%s], input=[%s]\n",isFound, strcmp(vocabularyStr,playerInput),vocabularyStr,playerInput);
-        }*/
         fclose(vocabulary);
     }
 }
 
 char startGame(){
-    char randomWord[50] = "getRandomWord"/*{getRandomWord()}*/; // ?? Нужен вывод функции в переменную strchr, чтобы не вызывать каждый раз getRandomWord
+    char randomWord[50] = "привет"/*{getRandomWord()}*/; // ?? Нужен вывод функции в переменную strchr, чтобы не вызывать каждый раз getRandomWord
     //randomWord = getRandomWord()
-    printf("Случанйое слово: %s\n\a",getRandomWord());  // *Вывод рандомного слова
+    printf("Случанйое слово: %s\n",getRandomWord());  // *Вывод рандомного слова
     printf("Введите слово: ");
     char playerInput[50];                               // *Строка для ввода слова игроком
     scanf("%s",playerInput);                            // [!] Проверка на пустую строку
@@ -84,10 +83,9 @@ char startGame(){
     checkInput(playerInput,randomWord);                 // ??????
 }
 
-void main() {
+int main() {
     //setlocale(LC_ALL, "utf-8");
     //char vocabularyPath[60] = {"/Users/dmitry/Desktop/ОмГУПС/typesetter/russian.txt"};  // [!] Путь к файлу в переменную
     srand(time(NULL));
     startGame();
-    //saveRandomWord();
 }
