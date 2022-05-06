@@ -1,7 +1,7 @@
 //Для вывода %c CP866 в терминале или setlocale()
 //Чувствительность к регистру в checkInput
 //Фильтрация слов для getRandomWord
-
+//Очистку терминала сделать кроссплатформенной в отдельной функции
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -43,7 +43,6 @@ void checkInput(char* playerInput, char* randomWord){
         int isFound = 0;
         while (fgets(vocabularyStr,50,vocabulary)) {    // *Запись в vocabularyStr строки из vocabulary(файла)
             fscanf(vocabulary, "%s",vocabularyStr);
-            //printf("%s",vocabularyStr);               // ?????? Считывает строки из файла вместе с крансой строкой после слова => при сравнеии слова получаются разные => проверка всегда false
             if(strcmp(playerInput, vocabularyStr)==0){  // *Сравнение слов, если идентичны, то возвращается 0
                 isFound=1;
                 break;
@@ -62,16 +61,43 @@ void checkInput(char* playerInput, char* randomWord){
 char startGame(){
     char randomWord[50];
     getRandomWord(randomWord);
-    printf("Случанйое слово: \x1b[4m%s\x1b[0m\n",randomWord);         // *Вывод рандомного слова
+    printf("Случанйое слово: \x1b[4m%s\x1b[0m\n",randomWord);   // *Вывод рандомного слова
     printf("Введите слово: ");
     char playerInput[50];                               // *Строка для ввода слова игроком
     scanf("%s",playerInput);                            // [!] Проверка на пустую строку
     checkInput(playerInput,randomWord);                 // ??????
 }
 
+void menu(){
+    char input[6];
+    system("clear");
+    printf("Для продолжения введите соответствующую команду\n");
+    printf("/start – начать игру\n");
+    printf("/rules – правила игры\n");
+    scanf("%s",input);
+    if (strcmp("/start",input)==0){
+        system("clear");
+        startGame();
+    }
+    else if(strcmp("/rules",input)==0){
+        system("clear");
+        printf("Правила игры \"Наборщик\":\n");
+        printf("Игроку дается случайно выбранное компьютером слово, задача игрока составить из букв этого слова как можно больше других слов.\n");
+        printf("Допускается располагать буквы в любом порядке, однако повторяться они могут столько раз, сколько содержатся в исходном слове.\n");
+        printf("\n/menu – вернуться в меню\n");
+        scanf("%s",input);
+        if (strcmp("/menu",input)==0){
+            menu();
+        }
+    }
+    else{
+        printf("Неизвестная команда\n");
+    }
+};
+
 int main() {
     //setlocale(LC_ALL, "utf-8");
     //char vocabularyPath[60] = {"/Users/dmitry/Desktop/ОмГУПС/typesetter/russian.txt"};  // [!] Путь к файлу в переменную
     srand(time(NULL));
-    startGame();
+    menu();
 }
