@@ -1,12 +1,23 @@
 //Для вывода %c CP866 в терминале или setlocale()
+//Для работы с Windows нужна CP866 + заменить"–" на "-"
 //Чувствительность к регистру в checkInput
 //Фильтрация слов для getRandomWord
-//Очистку терминала сделать кроссплатформенной в отдельной функции
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <unistd.h>
 #include <locale.h>
 #include <string.h>
+
+clearScreen(){                                          // *Кроссплатформенная очистка экрана
+    #if defined(_WIN32)
+        return system("cls");
+    #elif defined(__linux__)
+        return system("clear");
+    #elif defined(__APPLE__)
+        return system("clear");
+    #endif
+}
 
 void getRandomWord(char str[50]){
     FILE *vocabulary;                                   // *Подключение файла
@@ -70,17 +81,18 @@ char startGame(){
 
 void menu(){
     char input[6];
-    system("clear");
+    clearScreen();
     printf("Для продолжения введите соответствующую команду\n");
     printf("/start – начать игру\n");
     printf("/rules – правила игры\n");
+    printf("/exit – выход из игры\n");
     scanf("%s",input);
     if (strcmp("/start",input)==0){
-        system("clear");
+        clearScreen();
         startGame();
     }
     else if(strcmp("/rules",input)==0){
-        system("clear");
+        clearScreen();
         printf("Правила игры \"Наборщик\":\n");
         printf("Игроку дается случайно выбранное компьютером слово, задача игрока составить из букв этого слова как можно больше других слов.\n");
         printf("Допускается располагать буквы в любом порядке, однако повторяться они могут столько раз, сколько содержатся в исходном слове.\n");
@@ -90,8 +102,14 @@ void menu(){
             menu();
         }
     }
+    else if(strcmp("/exit",input)==0){
+        clearScreen();
+        _Exit(1337);
+        }
     else{
-        printf("Неизвестная команда\n");
+        printf("\x1b[31mНеизвестная команда!\x1b[0m\n");
+        sleep(2);
+        menu();
     }
 };
 
