@@ -9,6 +9,8 @@
 //Фильтрация слов для getRandomWord
 //Вывод ошибок в меню без перемещения
 
+//65: Текст не выводится, если нет \n на конце, который вроде там не нужен.
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -16,6 +18,8 @@
 #include <locale.h>
 #include <string.h>
 #include <ctype.h>
+
+char* savedWords[];
 
 char clearScreen(){                                     // *Кроссплатформенная очистка экрана
 #if defined(_WIN32)
@@ -30,7 +34,11 @@ char toupperString(){
 
 }
 
-void checkInput(char* playerInput, char* randomWord){
+void addScore(char* input){
+    printf("%s\n",input);
+}
+
+char checkInput(char* playerInput, char* randomWord){
     int isCorrect = 1;
     if (strcmp(playerInput, randomWord)!=0){            // *Проверка, что слова не одинаковые
         // Сравнение букв в playerInput с буквами randomWord:
@@ -41,34 +49,30 @@ void checkInput(char* playerInput, char* randomWord){
                 break;
             }
         }
+        if(isCorrect!=0){
+            // Проверка существования слова:
+            printf("Слово \x1b[4m%s\x1b[0m\x1b[32m подходит\x1b[0m по буквам. Ищем его в словаре...\n",playerInput);
+            FILE *vocabulary;
+            vocabulary = fopen("/Users/dmitry/Desktop/ОмГУПС/typesetter/russian.txt","r");
+            char vocabularyStr[50];                         // *Строка из словаря
+            while (fgets(vocabularyStr,50,vocabulary)) {    // *Запись в vocabularyStr строки из vocabulary(файла)
+                fscanf(vocabulary, "%s",vocabularyStr);
+                if(strcmp(playerInput, vocabularyStr)==0){  // *Сравнение слов, если идентичны, то возвращается 0
+                    fclose(vocabulary);
+                    addScore(playerInput);
+                    return playerInput;
+                }
+            }
+            printf("Слово \x1b[4m%s\x1b[0m \x1b[31mне найдено\x1b[0m в словаре\n",playerInput);
+            //Текст не выводится, если нет \n на конце, который вроде там не нужен.
+            //Сделать возврат к вводу
+        }
     }
     else{
         isCorrect = 0;
         printf("Вводимое слово \x1b[31mдолжно отличаться\x1b[0m от слова \x1b[4m%s\x1b[0m\n",randomWord);
     }
-    if(isCorrect!=0){
-        // Проверка существования слова:
-        printf("Слово \x1b[4m%s\x1b[0m\x1b[32m подходит\x1b[0m по буквам. Ищем его в словаре...\n",playerInput);
-        FILE *vocabulary;
-        vocabulary = fopen("/Users/dmitry/Desktop/ОмГУПС/typesetter/russian.txt","r");
-        char vocabularyStr[50];                         // *Строка из словаря
-        int isFound = 0;
-        while (fgets(vocabularyStr,50,vocabulary)) {    // *Запись в vocabularyStr строки из vocabulary(файла)
-            fscanf(vocabulary, "%s",vocabularyStr);
-            if(strcmp(playerInput, vocabularyStr)==0){  // *Сравнение слов, если идентичны, то возвращается 0
-                isFound=1;
-                break;
-                fclose(vocabulary);
-            }
-        }
-        if (isFound == 1){
-            printf("[+] \x1b[4m%s\x1b[0m – \x1b[32m подходит!\x1b[0m\n",playerInput);
-            // Добавить слово в созданный в startGame двумерный массив отгаданных слов
-        }
-        else{
-            printf("Слово \x1b[4m%s\x1b[0m \x1b[31mне найдено\x1b[0m в словаре\n",playerInput);
-        }
-    }
+
 }
 
 char doInput(char randomWord[50]){
