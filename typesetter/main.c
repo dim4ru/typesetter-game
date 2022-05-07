@@ -19,7 +19,8 @@
 #include <string.h>
 #include <ctype.h>
 
-char* savedWords[];
+char randomWord[50];
+char playerInput[50];
 
 char clearScreen(){                                     // *Кроссплатформенная очистка экрана
 #if defined(_WIN32)
@@ -30,28 +31,32 @@ char clearScreen(){                                     // *Кроссплатф
     return system("clear");
 #endif
 }
-char toupperString(){
-
+void toupperString(){
 }
 
-void addScore(char* input){
-    printf("%s\n",input);
+void doInput();
+
+void addScore(){
+    printf("Слово \x1b[4m%s\x1b[0m\x1b[32m подходит.\x1b[0m\n",playerInput);
+
+    doInput();
 }
 
-char checkInput(char* playerInput, char* randomWord){
+char* checkInput(){
     int isCorrect = 1;
     if (strcmp(playerInput, randomWord)!=0){            // *Проверка, что слова не одинаковые
         // Сравнение букв в playerInput с буквами randomWord:
         for(int i=0; playerInput[i]; i++){
             if(!strchr(randomWord,playerInput[i])){// *Поиск (в строке, символа)
-                printf("Введенное вами слово \x1b[4m%s\x1b[0m \x1b[31mне подходит\x1b[0m по буквам\n",playerInput);
+                printf("Слово \x1b[4m%s\x1b[0m \x1b[31mне подходит\x1b[0m по буквам\n",playerInput);
+                doInput();
                 isCorrect = 0;
                 break;
             }
         }
         if(isCorrect!=0){
             // Проверка существования слова:
-            printf("Слово \x1b[4m%s\x1b[0m\x1b[32m подходит\x1b[0m по буквам. Ищем его в словаре...\n",playerInput);
+            //printf("Слово \x1b[4m%s\x1b[0m\x1b[32m подходит\x1b[0m по буквам.\n",playerInput);
             FILE *vocabulary;
             vocabulary = fopen("/Users/dmitry/Desktop/ОмГУПС/typesetter/russian.txt","r");
             char vocabularyStr[50];                         // *Строка из словаря
@@ -59,11 +64,12 @@ char checkInput(char* playerInput, char* randomWord){
                 fscanf(vocabulary, "%s",vocabularyStr);
                 if(strcmp(playerInput, vocabularyStr)==0){  // *Сравнение слов, если идентичны, то возвращается 0
                     fclose(vocabulary);
-                    addScore(playerInput);
-                    return playerInput;
+                    addScore();
+                    return 0;
                 }
             }
-            printf("Слово \x1b[4m%s\x1b[0m \x1b[31mне найдено\x1b[0m в словаре\n",playerInput);
+            printf("Слово \x1b[4m%s\x1b[0m \x1b[31mне существует!\x1b[0m\n",playerInput);
+            doInput();
             //Текст не выводится, если нет \n на конце, который вроде там не нужен.
             //Сделать возврат к вводу
         }
@@ -71,32 +77,33 @@ char checkInput(char* playerInput, char* randomWord){
     else{
         isCorrect = 0;
         printf("Вводимое слово \x1b[31mдолжно отличаться\x1b[0m от слова \x1b[4m%s\x1b[0m\n",randomWord);
+        doInput();
     }
 
 }
 
-char doInput(char randomWord[50]){
+void doInput(){
+    sleep(2);
+    clearScreen();
+    printf("Случанйое слово: \x1b[4m%s\x1b[0m\n",randomWord);   // *Вывод рандомного слова
     printf("Введите слово: ");
-    char playerInput[50];                               // *Строка для ввода слова игроком
     scanf("%s",playerInput);
-    checkInput(playerInput,randomWord);                 // Запуск проверки слова
+    checkInput();                 // Запуск проверки слова
 }
 
-void getRandomWord(char str[50]){
+void getRandomWord(){
     FILE *vocabulary;                                   // *Подключение файла
     vocabulary = fopen("/Users/dmitry/Desktop/ОмГУПС/typesetter/russian.txt","r");
     fseek(vocabulary, rand() % 8366227, SEEK_SET);      // *Смещение указателя на случайное количество байт !> 8366227 – число байт
-    if (NULL != fgets(str, 100, vocabulary)){
-        fscanf(vocabulary, "%s",str);                   // *Чтение строки
+    if (NULL != fgets(randomWord, 100, vocabulary)){
+        fscanf(vocabulary, "%s",randomWord);                   // *Чтение строки
     }
     fclose(vocabulary);                                 // *Закрытие потока
 }
 
-char startGame(){
-    char randomWord[50];
-    getRandomWord(randomWord);
-    printf("Случанйое слово: \x1b[4m%s\x1b[0m\n",randomWord);   // *Вывод рандомного слова
-    doInput(randomWord);
+void startGame(){
+    getRandomWord();
+    doInput();
 }
 
 void menu(){
@@ -106,8 +113,8 @@ void menu(){
     printf("/start – начать игру\n");
     printf("/rules – правила игры\n");
     printf("/exit – выход из игры\n");
-    printf(": ");
-    scanf("%s",input);
+    printf(":");
+    scanf("%s",input);                                  //Поставить / в начале строки за игрока
     if (strcmp("/menu",input)==0){
         printf("\x1b[31mВы уже находитесьв в меню!\x1b[0m\n");
         sleep(2);
@@ -123,7 +130,7 @@ void menu(){
         printf("Правила игры \"Наборщик\":\n");
         printf("Игроку дается случайно выбранное компьютером слово, задача игрока составить из букв этого слова как можно больше других слов.\n");
         printf("Допускается располагать буквы в любом порядке, однако повторяться они могут столько раз, сколько содержатся в исходном слове.\n");
-        printf("Буквы можно вводить в любом регистре.\n");
+        printf("При проверке слов учитывается регистр.\n");
         printf("\n/menu – вернуться в меню\n");
         printf(": ");
         scanf("%s",input);
@@ -151,6 +158,7 @@ int main() {
     //setlocale(LC_ALL, "utf-8");
     //char vocabularyPath[60] = {"/Users/dmitry/Desktop/ОмГУПС/typesetter/russian.txt"};  // [!] Путь к файлу в переменную
     srand(time(NULL));
-    //menu();
-    startGame();
+    menu();
+    //Для быстрого старта
+    //startGame();
 }
