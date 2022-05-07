@@ -71,6 +71,13 @@ void checkInput(char* playerInput, char* randomWord){
     }
 }
 
+char doInput(char randomWord[50]){
+    printf("Введите слово: ");
+    char playerInput[50];                               // *Строка для ввода слова игроком
+    scanf("%s",playerInput);
+    checkInput(playerInput,randomWord);                 // Запуск проверки слова
+}
+
 void getRandomWord(char str[50]){
     FILE *vocabulary;                                   // *Подключение файла
     vocabulary = fopen("/Users/dmitry/Desktop/ОмГУПС/typesetter/russian.txt","r");
@@ -85,10 +92,7 @@ char startGame(){
     char randomWord[50];
     getRandomWord(randomWord);
     printf("Случанйое слово: \x1b[4m%s\x1b[0m\n",randomWord);   // *Вывод рандомного слова
-    printf("Введите слово: ");
-    char playerInput[50];                               // *Строка для ввода слова игроком
-    scanf("%s",playerInput);
-    checkInput(playerInput,randomWord);                 // Запуск проверки слова
+    doInput(randomWord);
 }
 
 void menu(){
@@ -143,5 +147,6 @@ int main() {
     //setlocale(LC_ALL, "utf-8");
     //char vocabularyPath[60] = {"/Users/dmitry/Desktop/ОмГУПС/typesetter/russian.txt"};  // [!] Путь к файлу в переменную
     srand(time(NULL));
-    menu();
+    //menu();
+    startGame();
 }
