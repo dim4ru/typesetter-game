@@ -28,39 +28,7 @@ int score;                                                  // *Счет игр�
 char randomWord[50];                                        // *Случайное слово
 char playerInput[50];                                       // *Ввод игрока
 
-struct node{
-    char* word;
-    struct node* next;
-};
-typedef struct node list;                                   // *Синоним для структуры
-
-
 void doInput();                                             // *Прототип функции для рекурсии
-
-list* addScore(list* head, char* word){                     // *Добавление введенных слов в список
-    list* tmp = (list*) malloc(sizeof(list));
-    tmp->word  = word;
-    tmp->next  = head;
-    printf("Слово \x1b[4m%s\x1b[0m\x1b[32m подходит.\x1b[0m\n",playerInput);
-    //doInput();
-    return tmp;
-}
-
-void printScore(list* head){
-    if(head){                           //Если передан ненулевой указатель
-        while(head->next){              //Пока элемент не последний
-            printf("-%s | ", head->word);//Печатаем его id
-            head=head->next;            //И переходим к следующему
-        }
-        printf("%s\n", head->word);     //Печатаем последний элемент
-        score++;
-    }
-    else
-        printf("empty list\n");
-    printf("Введено слов: %d\n",score);
-    printf("_________________________________\n");
-    doInput();
-}
 
 char clearScreen(){                                     // *Кроссплатформенная очистка экрана
 #if defined(_WIN32)
@@ -71,25 +39,18 @@ char clearScreen(){                                     // *Кроссплатф
     return system("clear");
 #endif
 }
-/*void toupperString(){
-}*/
 
-char checkInput(){
+void checkInput(){
     int isCorrect = 1;
     if (strcmp(playerInput, randomWord)!=0){                // *Проверка, что слова не одинаковые
         // Сравнение букв в playerInput с буквами randomWord:
         for(int i=0; playerInput[i]; i++){
-            if(!strchr(randomWord,playerInput[i])){  // *Поиск (в строке, символа), содержатся ли введенные буквы в слове
+            if(!strchr(randomWord,playerInput[i])){  // *Поиск (в строке, символа)
                 printf("Слово \x1b[4m%s\x1b[0m \x1b[31mне подходит\x1b[0m по буквам\n",playerInput);
+                sleep(2);
                 doInput();
                 isCorrect = 0;
                 break;
-            }
-            // Сравнение повторений букв
-            int rwCount;
-            int piCount
-            for(int i=0; randomWord[i]; i++{
-
             }
         }
         if(isCorrect!=0){
@@ -102,17 +63,14 @@ char checkInput(){
                 fscanf(vocabulary, "%s",vocabularyStr);
                 if(strcmp(playerInput, vocabularyStr)==0){  // *Сравнение слов, если идентичны, то возвращается 0
                     fclose(vocabulary);
-
-
-                    list* head = NULL;
-                    head = addScore(head, playerInput);
-                    printScore(head);
-                    return 0;
-
-
+                    printf("[+1] Cлово \x1b[4m%s\x1b[0m \x1b[32mподходит!\x1b[0m\n",playerInput);
+                    score++;
+                    sleep(2);
+                    doInput();
                 }
             }
             printf("Слово \x1b[4m%s\x1b[0m \x1b[31mне существует!\x1b[0m\n",playerInput);
+            sleep(2);
             doInput();
             //Текст не выводится, если нет \n на конце, который вроде там не нужен.
             //Сделать возврат к вводу
@@ -121,6 +79,7 @@ char checkInput(){
     else{
         isCorrect = 0;
         printf("Вводимое слово \x1b[31mдолжно отличаться\x1b[0m от слова \x1b[4m%s\x1b[0m\n",randomWord);
+        sleep(2);
         doInput();
     }
 
@@ -130,6 +89,7 @@ void doInput(){
     //sleep(4);
     clearScreen();
     //printScore();
+    printf("[Ваш счет: %d]\n",score);
     printf("Случанйое слово: \x1b[4m%s\x1b[0m\n",randomWord);// *Вывод рандомного слова
     printf("Введите слово: ");
     scanf("%s",playerInput);
@@ -203,6 +163,7 @@ int main() {
     //setlocale(LC_ALL, "utf-8");
     //char vocabularyPath[60] = {"/Users/dmitry/Desktop/ОмГУПС/typesetter/russian.txt"};  // [!] Путь к файлу в переменную
     srand(time(NULL));
-    //menu();
-    startGame();    //Для быстрого старта
+    menu();
+    //Для быстрого старта
+    //startGame();
 }
