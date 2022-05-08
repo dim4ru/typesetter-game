@@ -45,7 +45,7 @@ void checkInput(){
     if (strcmp(playerInput, randomWord)!=0){                // *Проверка, что слова не одинаковые
         // Сравнение букв в playerInput с буквами randomWord:
         for(int i=0; playerInput[i]; i++){
-            if(!strchr(randomWord,playerInput[i])){  // *Поиск (в строке, символа)
+            if(!strchr(randomWord,playerInput[i])){   // *Поиск (в строке, символа)
                 printf("Слово \x1b[4m%s\x1b[0m \x1b[31mне подходит\x1b[0m по буквам\n",playerInput);
                 sleep(2);
                 doInput();
