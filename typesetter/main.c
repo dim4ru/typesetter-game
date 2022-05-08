@@ -71,19 +71,25 @@ char clearScreen(){                                     // *Кроссплатф
     return system("clear");
 #endif
 }
-void toupperString(){
-}
+/*void toupperString(){
+}*/
 
 char checkInput(){
     int isCorrect = 1;
     if (strcmp(playerInput, randomWord)!=0){                // *Проверка, что слова не одинаковые
         // Сравнение букв в playerInput с буквами randomWord:
         for(int i=0; playerInput[i]; i++){
-            if(!strchr(randomWord,playerInput[i])){  // *Поиск (в строке, символа)
+            if(!strchr(randomWord,playerInput[i])){  // *Поиск (в строке, символа), содержатся ли введенные буквы в слове
                 printf("Слово \x1b[4m%s\x1b[0m \x1b[31mне подходит\x1b[0m по буквам\n",playerInput);
                 doInput();
                 isCorrect = 0;
                 break;
+            }
+            // Сравнение повторений букв
+            int rwCount;
+            int piCount
+            for(int i=0; randomWord[i]; i++{
+
             }
         }
         if(isCorrect!=0){
@@ -121,7 +127,7 @@ char checkInput(){
 }
 
 void doInput(){
-    sleep(4);
+    //sleep(4);
     clearScreen();
     //printScore();
     printf("Случанйое слово: \x1b[4m%s\x1b[0m\n",randomWord);// *Вывод рандомного слова
@@ -197,7 +203,6 @@ int main() {
     //setlocale(LC_ALL, "utf-8");
     //char vocabularyPath[60] = {"/Users/dmitry/Desktop/ОмГУПС/typesetter/russian.txt"};  // [!] Путь к файлу в переменную
     srand(time(NULL));
-    menu();
-    //Для быстрого старта
-    //startGame();
+    //menu();
+    startGame();    //Для быстрого старта
 }
