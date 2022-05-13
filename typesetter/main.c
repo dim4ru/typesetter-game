@@ -1,3 +1,4 @@
+//без: проверки повтора слов, проверки количество повторяющихся букв в слове, вывода списка введенных слов...
 //Для вывода %c CP866 в терминале или setlocale()
 //Для работы с Windows нужна CP866 + заменить"–" на "-"
 
@@ -8,13 +9,9 @@
 //Не запускать sleep при первом вызове doInput
 //Сделать выход во время игры
 //toupperString() чувствительность к регистру в checkInput
-//Проверка на пустую строку playerInput
-//Счет игрока
 //Относительный путь к словарю
 //Фильтрация слов для getRandomWord
-//Вывод ошибок в меню без перемещения
-
-//65: Текст не выводится, если нет \n на конце, который вроде там не нужен.
+//Проверка на пустую строку playerInput
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,9 +23,29 @@
 
 int score;                                                  // *Счет игрока
 char randomWord[50];                                        // *Случайное слово
-char playerInput[50];                                       // *Ввод игрока
+//char playerInput[50];                                       // *Ввод игрока
 
-void doInput();                                             // *Прототип функции для рекурсии
+/*
+repetitionCount(){
+    #include <stdio.h>
+#include <string.h>
+
+int meetings_count(const char * str, const char * substr) {
+    return ( str = strstr(str, substr) ) ? 1 + meetings_count(str + 1, substr) : 0;
+}
+
+#define STR_SIZE 256
+#define GET_STRING(str) ( scanf("%255[^\n]%*c", (str)) == 1 )
+
+int main(void) {
+    char string[STR_SIZE], substring[STR_SIZE];
+
+    while ( printf("String: ") && GET_STRING(string) && printf("Substring: ") && GET_STRING(substring) )
+        printf("%d meetings.\n", meetings_count(string, substring));
+
+    return 0;
+}
+}*/
 
 char clearScreen(){                                     // *Кроссплатформенная очистка экрана
 #if defined(_WIN32)
@@ -40,14 +57,52 @@ char clearScreen(){                                     // *Кроссплатф
 #endif
 }
 
-void checkInput(){
+
+
+
+struct node{
+    char* word;
+    struct node* next;
+};
+
+typedef struct node list;
+
+list *head = NULL;
+
+list* addScore(list* head, char* word){
+    list* tmp = (list*) malloc(sizeof(list));
+    tmp->word  = word;
+    tmp->next  = head;
+    return tmp;
+}
+
+void printScore(list* head){
+    if(head){                               //Если передан ненулевой указатель
+        while(head->next){                  //Пока элемент не последний
+            printf("%s | ", head->word);    //Печатаем его id
+            head=head->next;                //И переходим к следующему
+        }
+        printf("%s\n", head->word);         //Печатаем последний элемент
+        score++;
+    }
+    else
+        printf("empty list\n");
+    printf("Введено слов: %d\n",score);
+    printf("_________________\n");
+}
+
+
+void doInput();                                             // *Прототип функции для рекурсии
+
+void checkInput(char* playerInput){
     int isCorrect = 1;
     if (strcmp(playerInput, randomWord)!=0){                // *Проверка, что слова не одинаковые
         // Сравнение букв в playerInput с буквами randomWord:
         for(int i=0; playerInput[i]; i++){
             if(!strchr(randomWord,playerInput[i])){   // *Поиск (в строке, символа)
                 printf("Слово \x1b[4m%s\x1b[0m \x1b[31mне подходит\x1b[0m по буквам\n",playerInput);
-                sleep(2);
+                sleep(1);
+                clearScreen();
                 doInput();
                 isCorrect = 0;
                 break;
@@ -64,13 +119,16 @@ void checkInput(){
                 if(strcmp(playerInput, vocabularyStr)==0){  // *Сравнение слов, если идентичны, то возвращается 0
                     fclose(vocabulary);
                     printf("[+1] Cлово \x1b[4m%s\x1b[0m \x1b[32mподходит!\x1b[0m\n",playerInput);
-                    score++;
-                    sleep(2);
+                    sleep(1);
+                    clearScreen();
+                    head = addScore(head, playerInput);
+                    printScore(head);
                     doInput();
                 }
             }
             printf("Слово \x1b[4m%s\x1b[0m \x1b[31mне существует!\x1b[0m\n",playerInput);
-            sleep(2);
+            sleep(1);
+            clearScreen();
             doInput();
             //Текст не выводится, если нет \n на конце, который вроде там не нужен.
             //Сделать возврат к вводу
@@ -79,7 +137,8 @@ void checkInput(){
     else{
         isCorrect = 0;
         printf("Вводимое слово \x1b[31mдолжно отличаться\x1b[0m от слова \x1b[4m%s\x1b[0m\n",randomWord);
-        sleep(2);
+        sleep(1);
+        clearScreen();
         doInput();
     }
 
@@ -87,13 +146,13 @@ void checkInput(){
 
 void doInput(){
     //sleep(4);
-    clearScreen();
     //printScore();
-    printf("[Ваш счет: %d]\n",score);
+    char playerInput[50];
+    //printf("[Ваш счет: %d]\n",score);
     printf("Случанйое слово: \x1b[4m%s\x1b[0m\n",randomWord);// *Вывод рандомного слова
     printf("Введите слово: ");
     scanf("%s",playerInput);
-    checkInput();                 // Запуск проверки слова
+    checkInput(playerInput);                                           // Запуск проверки слова
 }
 
 void getRandomWord(){
