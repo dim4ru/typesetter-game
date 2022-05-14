@@ -1,17 +1,16 @@
-//без: проверки повтора слов, проверки количество повторяющихся букв в слове, вывода списка введенных слов...
 //Для вывода %c CP866 в терминале или setlocale()
 //Для работы с Windows нужна CP866 + заменить"–" на "-"
 
+
+//Первое введенное слово можно ввести во второй раз
+
+//После вывода ошибки исчезает список слов и счет
 //Отдельная функция error, по коду ошибки выводить ее текст и перезапрашивать слово
-//Чтобы список слов не сбрасывался
-//Вызов printScore в doInput, чтобы он исчезал с очисткой экрана
-//Убрать sleep() для первого запуска
-//Проверка повтора слов в списке
-//Не запускать sleep при первом вызове doInput
+
 //Сделать выход во время игры
 //toupperString() чувствительность к регистру в checkInput
 //Относительный путь к словарю
-//Фильтрация слов для getRandomWord
+//Только большие слова из getRandomWord
 //Проверка на пустую строку playerInput
 
 #include <stdio.h>
@@ -24,6 +23,7 @@
 
 int score;                                                  // *Счет игрока
 char randomWord[50];                                        // *Случайное слово
+char* used;
 
 char clearScreen(){                                     // *Кроссплатформенная очистка экрана
 #if defined(_WIN32)
@@ -64,21 +64,16 @@ void printScore(list* head){
     printf("_________________\n");
 }
 
-int alreadyUsed(list* head, char* word) {                    // *Проверка ввода ранее использованного слова
-    if(head){                               //Если передан ненулевой указатель
-        while(head->next){                  //Пока элемент не последний
-            if(strcmp(head->word,word)!=0){
-                head=head->next;            //И переходим к следующему
-            }
-            else{
-                return 1;
-            }
+int alreadyUsed(list* head, char* word) {                   // *Проверка ввода ранее использованного слова
+    if(head){
+        while (head->next && strcmp(head->word,word)!=0){
+            head=head->next;
         }
-        return 0;
+        if(strcmp(head->word,word)==0){
+            return 1;
+        } else return 0;
     }
-    else{
-        return 0;
-    }
+    return 0;
 }
 /*
 void repetitionCount(){
@@ -180,6 +175,7 @@ void getRandomWord(){
 }
 
 void startGame(){
+    clearScreen();
     getRandomWord();
     doInput();
 }
