@@ -3,9 +3,9 @@
 
 
 //Сделать выход во время игры
-//toupperString() чувствительность к регистру в checkInput
-//Относительный путь к словарю
 //Только большие слова из getRandomWord
+
+//toupperString() чувствительность к регистру в checkInput
 //Проверка на пустую строку playerInput
 
 #include <stdio.h>
@@ -16,11 +16,12 @@
 #include <string.h>
 #include <ctype.h>
 
-char* vocabularyPath = "..//russian.txt";
+char* vocabularyPath = "..//russian.txt";                   // *Путь к файлу со словарем
 int score;                                                  // *Счет игрока
 char randomWord[50];                                        // *Случайное слово
 
-void doInput();                                             // *Прототип функции для рекурсии
+void doInput();                                             // *Прототипы функций для рекурсии
+void menu();
 
 char clearScreen(){                                     // *Кроссплатформенная очистка экрана
 #if defined(_WIN32)
@@ -35,19 +36,19 @@ char clearScreen(){                                     // *Кроссплатф
 void error(int code){
     switch (code){
         case 1:
-            printf("\x1b[31mВводимое слово должно отличаться от слова \x1b[4m%s\x1b[0m\x1b[0m\n",randomWord);
+            printf("\x1b[31m[!]Вводимое слово должно отличаться от слова \x1b[4m%s\x1b[0m\x1b[0m\n",randomWord);
             sleep(1);
             doInput();
         case 2: //Неподходящие буквы или их количество
-            printf("\x1b[31Слово не подходит по буквам или их количеству\x1b[0m\n");
+            printf("\x1b[31m[!]Слово не подходит по буквам или их количеству\x1b[0m\n");
             sleep(1);
             doInput();
         case 3: //Раннее использованное слово
-            printf("\x1b[31mВы уже использовали это слово\x1b[0m\n");
+            printf("\x1b[31m[!]Вы уже использовали это слово\x1b[0m\n");
             sleep(1);
             doInput();
         case 4: //Слово не существует
-            printf("\x1b[31mТакое слово не существует!\x1b[0m\n");
+            printf("\x1b[31m[!]Такое слово не существует!\x1b[0m\n");
             sleep(1);
             doInput();
 
@@ -79,7 +80,7 @@ void printScore(list* head){
     }
     else
         printf("empty list\n");
-    printf("Введено слов: %d\n",score);
+    printf("Ваш счет: %d\n",score);
     printf("_________________\n");
 }
 
@@ -107,6 +108,9 @@ int repetitionCount(char string[50],char substring){
 
 void checkInput(char* playerInput){
     int isCorrect = 1;
+    if(strcmp(playerInput,"/menu")==0){
+        menu();
+    }
     if (strcmp(playerInput, randomWord)!=0){                // *Проверка, что слова не одинаковые
         // Сравнение букв в playerInput с буквами randomWord:
         for(int i=0; playerInput[i]!='\0';i++){
@@ -126,7 +130,6 @@ void checkInput(char* playerInput){
                 fscanf(vocabulary, "%s",vocabularyStr);
                 if(strcmp(playerInput, vocabularyStr)==0){  // *Сравнение слов, если идентичны, то возвращается 0
                     fclose(vocabulary);
-                    //printf("\x1b[35maU returned %d\x1b[0m\n",alreadyUsed(head,playerInput));
                     if(alreadyUsed(head,playerInput)==0){
                         printf("[+1] Cлово \x1b[4m%s\x1b[0m \x1b[32mподходит!\x1b[0m\n",playerInput);
                         sleep(1);
@@ -149,12 +152,9 @@ void checkInput(char* playerInput){
 }
 
 void doInput(){
-    //sleep(4);
-    //printScore();
     char playerInput[50];
-    //printf("[Ваш счет: %d]\n",score);
-    printf("Случанйое слово: \x1b[4m%s\x1b[0m\n",randomWord);// *Вывод рандомного слова
-    printf("Введите слово: ");
+    printf("\x1b[4m%s\x1b[0m\n\n",randomWord);// *Вывод рандомного слова
+    printf(":");
     scanf("%s",playerInput);
     checkInput(playerInput);                                           // Запуск проверки слова
 }
@@ -180,6 +180,7 @@ void menu(){
     clearScreen();
     printf("Для продолжения введите соответствующую команду\n");
     printf("/start – начать игру\n");
+    printf("/menu – вернуться в меню\n");
     printf("/rules – правила игры\n");
     printf("/exit – выход из игры\n");
     printf(":");
@@ -225,9 +226,7 @@ void menu(){
 
 int main() {
     //setlocale(LC_ALL, "utf-8");
-    //char vocabularyPath[60] = {"/Users/dmitry/Desktop/ОмГУПС/typesetter/russian.txt"};  // [!] Путь к файлу в переменную
     srand(time(NULL));
-    //menu();
-    //Для быстрого старта
-    startGame();
+    menu();
+
 }
