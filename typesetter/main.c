@@ -35,27 +35,23 @@ char clearScreen(){                                     // *Кроссплатф
 #endif
 }
 
-void error(int code, char* playerInput){
+void error(int code){
     switch (code){
         case 1:
-            printf("Вводимое слово \x1b[31mдолжно отличаться\x1b[0m от слова \x1b[4m%s\x1b[0m\n",randomWord);
+            printf("\x1b[31mВводимое слово должно отличаться от слова \x1b[4m%s\x1b[0m\x1b[0m\n",randomWord);
             sleep(1);
-            clearScreen();
             doInput();
         case 2: //Неподходящие буквы или их количество
-            printf("Слово \x1b[4m%s\x1b[0m \x1b[31mне подходит\x1b[0m по буквам или их количеству\n",playerInput);
+            printf("\x1b[31Слово не подходит по буквам или их количеству\x1b[0m\n");
             sleep(1);
-            clearScreen();
             doInput();
         case 3: //Раннее использованное слово
-            printf("Вы \x1b[31mуже использовали\x1b[0m это слово\n");
+            printf("\x1b[31mВы уже использовали это слово\x1b[0m\n");
             sleep(1);
-            clearScreen();
             doInput();
         case 4: //Слово не существует
-            printf("Слово \x1b[4m%s\x1b[0m \x1b[31mне существует!\x1b[0m\n",playerInput);
+            printf("\x1b[31mТакое слово не существует!\x1b[0m\n");
             sleep(1);
-            clearScreen();
             doInput();
 
     }
@@ -121,7 +117,7 @@ void checkInput(char* playerInput){
                 isCorrect=1;
             }
             else{
-                error(2,playerInput);
+                error(2);
             }
         }
         if(isCorrect!=0){
@@ -142,15 +138,15 @@ void checkInput(char* playerInput){
                         printScore(head);
                         doInput();
                     } else{
-                        error(3,playerInput);
+                        error(3);
                     }
                 }
             }
-            error(4,playerInput);
+            error(4);
         }
     }
     else{
-        error(1,playerInput);
+        error(1);
     }
 
 }
