@@ -13,7 +13,6 @@
 #include <unistd.h>
 #include <locale.h>
 #include <string.h>
-#include <ctype.h>
 
 char* vocabularyPath = "..//russian.txt";                   // *Путь к файлу со словарем
 int score;                                                  // *Счет игрока
@@ -192,7 +191,6 @@ void menu(){
     }
 
     else if (strcmp("/start",input)==0){
-        clearScreen();
         startGame();
     }
     else if(strcmp("/rules",input)==0){
@@ -227,7 +225,5 @@ void menu(){
 int main() {
     //setlocale(LC_ALL, "utf-8");
     srand(time(NULL));
-    //menu();
-    startGame();
-
+    menu();
 }
