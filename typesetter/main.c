@@ -2,7 +2,6 @@
 //Для работы с Windows нужна CP866 + заменить"–" на "-"
 
 
-//Сделать выход во время игры
 //Только большие слова из getRandomWord
 
 //toupperString() чувствительность к регистру в checkInput
@@ -23,7 +22,7 @@ char randomWord[50];                                        // *Случайно
 void doInput();                                             // *Прототипы функций для рекурсии
 void menu();
 
-char clearScreen(){                                     // *Кроссплатформенная очистка экрана
+char clearScreen(){                                         // *Кроссплатформенная очистка экрана
 #if defined(_WIN32)
     return system("cls");
 #elif defined(__linux__)
@@ -33,7 +32,7 @@ char clearScreen(){                                     // *Кроссплатф
 #endif
 }
 
-void error(int code){
+void error(int code){                                       //Вывод ошибки в соответствии с переданным (кодом)
     switch (code){
         case 1:
             printf("\x1b[31m[!]Вводимое слово должно отличаться от слова \x1b[4m%s\x1b[0m\x1b[0m\n",randomWord);
@@ -59,7 +58,7 @@ struct node{
     char* word;
     struct node* next;
 };
-typedef struct node list;
+typedef struct node list;                                   // *Синоним для структуры
 list* head = NULL;
 
 list* addScore(list* head, char* word){
@@ -96,7 +95,7 @@ int alreadyUsed(list* head, char* word) {                   // *Проверка
     return 0;
 }
 
-int repetitionCount(char string[50],char substring){
+int repetitionCount(char string[50],char substring){        // *Количество повторов в (строке,символа)
     int count = 0;
     for(int i = 0; string[i]!='\0'; i++){
         if(string[i]==substring){
@@ -115,10 +114,10 @@ void checkInput(char* playerInput){
         // Сравнение букв в playerInput с буквами randomWord:
         for(int i=0; playerInput[i]!='\0';i++){
             if(repetitionCount(randomWord,playerInput[i])>=repetitionCount(playerInput,playerInput[i])){
-                isCorrect=1;
+                isCorrect=0;
             }
             else{
-                error(2);
+                error(2);                           // *Ошибка: В слове неподходящие буквы или они повторяются чаще допустимого
             }
         }
         if(isCorrect!=0){
@@ -130,33 +129,33 @@ void checkInput(char* playerInput){
                 fscanf(vocabulary, "%s",vocabularyStr);
                 if(strcmp(playerInput, vocabularyStr)==0){  // *Сравнение слов, если идентичны, то возвращается 0
                     fclose(vocabulary);
-                    if(alreadyUsed(head,playerInput)==0){
+                    if(alreadyUsed(head,playerInput)==0){   // *Проверка, что слово не вводилось раньше
                         printf("[+1] Cлово \x1b[4m%s\x1b[0m \x1b[32mподходит!\x1b[0m\n",playerInput);
                         sleep(1);
                         clearScreen();
-                        head = addScore(head, playerInput);
+                        head = addScore(head, playerInput); // *Добавление слова в список и score++
                         printScore(head);
                         doInput();
                     } else{
-                        error(3);
+                        error(3);                   // *Ошибка: Повторный ввод слова
                     }
                 }
             }
-            error(4);
+            error(4);                               // *Ошибка: Несуществующее слово
         }
     }
     else{
-        error(1);
+        error(1);                                   // *Ошибка: Одинаковые слова
     }
 
 }
 
 void doInput(){
     char playerInput[50];
-    printf("\x1b[4m%s\x1b[0m\n\n",randomWord);// *Вывод рандомного слова
+    printf("\x1b[4m%s\x1b[0m\n\n",randomWord);              // *Вывод рандомного слова
     printf(":");
     scanf("%s",playerInput);
-    checkInput(playerInput);                                           // Запуск проверки слова
+    checkInput(playerInput);                                // *Запуск проверки слова
 }
 
 void getRandomWord(){
@@ -170,8 +169,8 @@ void getRandomWord(){
 }
 
 void startGame(){
-    clearScreen();
-    getRandomWord();
+    clearScreen();                                          // *Очистить консоль
+    getRandomWord();                                        // *Сгенерировать случайное слово
     doInput();
 }
 
@@ -184,7 +183,7 @@ void menu(){
     printf("/rules – правила игры\n");
     printf("/exit – выход из игры\n");
     printf(":");
-    scanf("%s",input);                                      //Поставить / в начале строки за игрока
+    scanf("%s",input);
     if (strcmp("/menu",input)==0){
         printf("\x1b[31mВы уже находитесьв в меню!\x1b[0m\n");
         sleep(2);
