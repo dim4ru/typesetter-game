@@ -2,9 +2,6 @@
 //Для работы с Windows нужна CP866 + заменить"–" на "-"
 
 
-//После вывода ошибки исчезает список слов и счет
-//Отдельная функция error, по коду ошибки выводить ее текст и перезапрашивать слово
-
 //Сделать выход во время игры
 //toupperString() чувствительность к регистру в checkInput
 //Относительный путь к словарю
@@ -19,7 +16,7 @@
 #include <string.h>
 #include <ctype.h>
 
-char* vocabularyPath = "";
+char* vocabularyPath = "..//russian.txt";
 int score;                                                  // *Счет игрока
 char randomWord[50];                                        // *Случайное слово
 
@@ -123,7 +120,7 @@ void checkInput(char* playerInput){
         if(isCorrect!=0){
             // *Проверка существования слова:
             FILE *vocabulary;
-            vocabulary = fopen("/Users/dmitry/Desktop/ОмГУПС/typesetter/russian.txt","r");
+            vocabulary = fopen(vocabularyPath,"r");
             char vocabularyStr[50];                         // *Строка из словаря
             while (fgets(vocabularyStr,50,vocabulary)) {    // *Запись в vocabularyStr строки из vocabulary(файла)
                 fscanf(vocabulary, "%s",vocabularyStr);
@@ -164,7 +161,7 @@ void doInput(){
 
 void getRandomWord(){
     FILE *vocabulary;                                       // *Подключение файла
-    vocabulary = fopen("/Users/dmitry/Desktop/ОмГУПС/typesetter/russian.txt","r");
+    vocabulary = fopen(vocabularyPath,"r");
     fseek(vocabulary, rand() % 8366227, SEEK_SET);          // *Смещение указателя на случайное количество байт !> 8366227 – число байт
     if (NULL != fgets(randomWord, 100, vocabulary)){
         fscanf(vocabulary, "%s",randomWord);                // *Чтение строки
