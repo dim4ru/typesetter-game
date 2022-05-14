@@ -2,8 +2,6 @@
 //Для работы с Windows нужна CP866 + заменить"–" на "-"
 
 
-//Первое введенное слово можно ввести во второй раз
-
 //После вывода ошибки исчезает список слов и счет
 //Отдельная функция error, по коду ошибки выводить ее текст и перезапрашивать слово
 
@@ -23,7 +21,6 @@
 
 int score;                                                  // *Счет игрока
 char randomWord[50];                                        // *Случайное слово
-char* used;
 
 char clearScreen(){                                     // *Кроссплатформенная очистка экрана
 #if defined(_WIN32)
@@ -75,27 +72,16 @@ int alreadyUsed(list* head, char* word) {                   // *Проверка
     }
     return 0;
 }
-/*
-void repetitionCount(){
-    #include <stdio.h>
-#include <string.h>
 
-int meetings_count(const char * str, const char * substr) {
-    return ( str = strstr(str, substr) ) ? 1 + meetings_count(str + 1, substr) : 0;
+int repetitionCount(char string[50],char substring){
+    int count = 0;
+    for(int i = 0; string[i]!='\0'; i++){
+        if(string[i]==substring){
+            count++;
+        }
+    }
+    return count;
 }
-
-#define STR_SIZE 256
-#define GET_STRING(str) ( scanf("%255[^\n]%*c", (str)) == 1 )
-
-int main(void) {
-    char string[STR_SIZE], substring[STR_SIZE];
-
-    while ( printf("String: ") && GET_STRING(string) && printf("Substring: ") && GET_STRING(substring) )
-        printf("%d meetings.\n", meetings_count(string, substring));
-
-    return 0;
-}
-}*/
 
 void doInput();                                             // *Прототип функции для рекурсии
 
@@ -103,14 +89,15 @@ void checkInput(char* playerInput){
     int isCorrect = 1;
     if (strcmp(playerInput, randomWord)!=0){                // *Проверка, что слова не одинаковые
         // Сравнение букв в playerInput с буквами randomWord:
-        for(int i=0; playerInput[i]; i++){
-            if(!strchr(randomWord,playerInput[i])){   // *Поиск (в строке, символа)
+        for(int i=0; playerInput[i]!='\0';i++){
+            if(repetitionCount(randomWord,playerInput[i])>=repetitionCount(playerInput,playerInput[i])){
+                isCorrect=1;
+            }
+            else{
                 printf("Слово \x1b[4m%s\x1b[0m \x1b[31mне подходит\x1b[0m по буквам\n",playerInput);
                 sleep(1);
                 clearScreen();
                 doInput();
-                isCorrect = 0;
-                break;
             }
         }
         if(isCorrect!=0){
