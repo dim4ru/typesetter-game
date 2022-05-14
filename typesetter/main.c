@@ -19,8 +19,11 @@
 #include <string.h>
 #include <ctype.h>
 
+char* vocabularyPath = "";
 int score;                                                  // *Счет игрока
 char randomWord[50];                                        // *Случайное слово
+
+void doInput();                                             // *Прототип функции для рекурсии
 
 char clearScreen(){                                     // *Кроссплатформенная очистка экрана
 #if defined(_WIN32)
@@ -30,6 +33,32 @@ char clearScreen(){                                     // *Кроссплатф
 #elif defined(__APPLE__)
     return system("clear");
 #endif
+}
+
+void error(int code, char* playerInput){
+    switch (code){
+        case 1:
+            printf("Вводимое слово \x1b[31mдолжно отличаться\x1b[0m от слова \x1b[4m%s\x1b[0m\n",randomWord);
+            sleep(1);
+            clearScreen();
+            doInput();
+        case 2: //Неподходящие буквы или их количество
+            printf("Слово \x1b[4m%s\x1b[0m \x1b[31mне подходит\x1b[0m по буквам или их количеству\n",playerInput);
+            sleep(1);
+            clearScreen();
+            doInput();
+        case 3: //Раннее использованное слово
+            printf("Вы \x1b[31mуже использовали\x1b[0m это слово\n");
+            sleep(1);
+            clearScreen();
+            doInput();
+        case 4: //Слово не существует
+            printf("Слово \x1b[4m%s\x1b[0m \x1b[31mне существует!\x1b[0m\n",playerInput);
+            sleep(1);
+            clearScreen();
+            doInput();
+
+    }
 }
 
 struct node{
@@ -83,8 +112,6 @@ int repetitionCount(char string[50],char substring){
     return count;
 }
 
-void doInput();                                             // *Прототип функции для рекурсии
-
 void checkInput(char* playerInput){
     int isCorrect = 1;
     if (strcmp(playerInput, randomWord)!=0){                // *Проверка, что слова не одинаковые
@@ -94,10 +121,7 @@ void checkInput(char* playerInput){
                 isCorrect=1;
             }
             else{
-                printf("Слово \x1b[4m%s\x1b[0m \x1b[31mне подходит\x1b[0m по буквам\n",playerInput);
-                sleep(1);
-                clearScreen();
-                doInput();
+                error(2,playerInput);
             }
         }
         if(isCorrect!=0){
@@ -118,24 +142,15 @@ void checkInput(char* playerInput){
                         printScore(head);
                         doInput();
                     } else{
-                        printf("Вы \x1b[31mуже использовали\x1b[0m это слово\n");
-                        sleep(1);
-                        clearScreen();
-                        doInput();
+                        error(3,playerInput);
                     }
                 }
             }
-            printf("Слово \x1b[4m%s\x1b[0m \x1b[31mне существует!\x1b[0m\n",playerInput);
-            sleep(1);
-            clearScreen();
-            doInput();
+            error(4,playerInput);
         }
     }
     else{
-        printf("Вводимое слово \x1b[31mдолжно отличаться\x1b[0m от слова \x1b[4m%s\x1b[0m\n",randomWord);
-        sleep(1);
-        clearScreen();
-        doInput();
+        error(1,playerInput);
     }
 
 }
