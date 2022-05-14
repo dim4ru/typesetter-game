@@ -105,7 +105,7 @@ int repetitionCount(char string[50],char substring){        // *Количест
     return count;
 }
 
-void checkInput(char* playerInput){
+void checkInput(char* playerInput){                         // *Проверка введенного игрока слова на корректность
     int isCorrect = 1;
     if(strcmp(playerInput,"/menu")==0){
         menu();
@@ -158,13 +158,14 @@ void doInput(){
     checkInput(playerInput);                                // *Запуск проверки слова
 }
 
-void getRandomWord(){
+void getRandomWord(){                                       // *Вывод случайного слова из файла "russian.txt" (15+ символов)
     FILE *vocabulary;                                       // *Подключение файла
     vocabulary = fopen(vocabularyPath,"r");
     fseek(vocabulary, rand() % 8366227, SEEK_SET);          // *Смещение указателя на случайное количество байт !> 8366227 – число байт
     if (NULL != fgets(randomWord, 100, vocabulary)){
         fscanf(vocabulary, "%s",randomWord);                // *Чтение строки
     }
+    if(strlen(randomWord)<30)getRandomWord();            // *Если слово меньше 15 символов в длину, получить заново
     fclose(vocabulary);                                     // *Закрытие потока
 }
 
@@ -226,6 +227,7 @@ void menu(){
 int main() {
     //setlocale(LC_ALL, "utf-8");
     srand(time(NULL));
-    menu();
+    //menu();
+    startGame();
 
 }
