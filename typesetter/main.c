@@ -1,9 +1,6 @@
 //Для вывода %c CP866 в терминале или setlocale()
 //Для работы с Windows нужна CP866 + заменить"–" на "-"
 
-
-//Только большие слова из getRandomWord
-
 //toupperString() чувствительность к регистру в checkInput
 //Проверка на пустую строку playerInput
 
@@ -105,49 +102,42 @@ int repetitionCount(char string[50],char substring){        // *Количест
     return count;
 }
 
-void checkInput(char* playerInput){                         // *Проверка введенного игрока слова на корректность
-    int isCorrect = 1;
-    if(strcmp(playerInput,"/menu")==0){
+void checkInput(char* playerInput){
+    if(strcmp(playerInput,"/menu")==0){                     // *Проверка ввода для выхода в меню
         menu();
     }
     if (strcmp(playerInput, randomWord)!=0){                // *Проверка, что слова не одинаковые
         // Сравнение букв в playerInput с буквами randomWord:
         for(int i=0; playerInput[i]!='\0';i++){
-            if(repetitionCount(randomWord,playerInput[i])>=repetitionCount(playerInput,playerInput[i])){
-                isCorrect=0;
-            }
-            else{
+            if(repetitionCount(randomWord,playerInput[i])<repetitionCount(playerInput,playerInput[i])){
                 error(2);                           // *Ошибка: В слове неподходящие буквы или они повторяются чаще допустимого
             }
         }
-        if(isCorrect!=0){
-            // *Проверка существования слова:
-            FILE *vocabulary;
-            vocabulary = fopen(vocabularyPath,"r");
-            char vocabularyStr[50];                         // *Строка из словаря
-            while (fgets(vocabularyStr,50,vocabulary)) {    // *Запись в vocabularyStr строки из vocabulary(файла)
-                fscanf(vocabulary, "%s",vocabularyStr);
-                if(strcmp(playerInput, vocabularyStr)==0){  // *Сравнение слов, если идентичны, то возвращается 0
-                    fclose(vocabulary);
-                    if(alreadyUsed(head,playerInput)==0){   // *Проверка, что слово не вводилось раньше
-                        printf("[+1] Cлово \x1b[4m%s\x1b[0m \x1b[32mподходит!\x1b[0m\n",playerInput);
-                        sleep(1);
-                        clearScreen();
-                        head = addScore(head, playerInput); // *Добавление слова в список и score++
-                        printScore(head);
-                        doInput();
-                    } else{
-                        error(3);                   // *Ошибка: Повторный ввод слова
-                    }
+        // *Проверка существования слова:
+        FILE *vocabulary;
+        vocabulary = fopen(vocabularyPath,"r");
+        char vocabularyStr[50];                         // *Строка из словаря
+        while (fgets(vocabularyStr,50,vocabulary)) {    // *Запись в vocabularyStr строки из vocabulary(файла)
+            fscanf(vocabulary, "%s",vocabularyStr);
+            if(strcmp(playerInput, vocabularyStr)==0){  // *Сравнение слов, если идентичны, то возвращается 0
+                fclose(vocabulary);
+                if(alreadyUsed(head,playerInput)==0){   // *Проверка, что слово не вводилось раньше
+                    printf("[+1] Cлово \x1b[4m%s\x1b[0m \x1b[32mподходит!\x1b[0m\n",playerInput);
+                    sleep(1);
+                    clearScreen();
+                    head = addScore(head, playerInput); // *Добавление слова в список и score++
+                    printScore(head);
+                    doInput();
+                } else{
+                    error(3);                   // *Ошибка: Повторный ввод слова
                 }
             }
-            error(4);                               // *Ошибка: Несуществующее слово
         }
+        error(4);                               // *Ошибка: Несуществующее слово
     }
     else{
         error(1);                                   // *Ошибка: Одинаковые слова
     }
-
 }
 
 void doInput(){
@@ -158,14 +148,16 @@ void doInput(){
     checkInput(playerInput);                                // *Запуск проверки слова
 }
 
-void getRandomWord(){                                       // *Вывод случайного слова из файла "russian.txt" (15+ символов)
+void getRandomWord(){
     FILE *vocabulary;                                       // *Подключение файла
     vocabulary = fopen(vocabularyPath,"r");
     fseek(vocabulary, rand() % 8366227, SEEK_SET);          // *Смещение указателя на случайное количество байт !> 8366227 – число байт
     if (NULL != fgets(randomWord, 100, vocabulary)){
         fscanf(vocabulary, "%s",randomWord);                // *Чтение строки
+        if (strlen(randomWord)<30){
+            getRandomWord();
+        }
     }
-    if(strlen(randomWord)<30)getRandomWord();            // *Если слово меньше 15 символов в длину, получить заново
     fclose(vocabulary);                                     // *Закрытие потока
 }
 
@@ -216,7 +208,7 @@ void menu(){
     else if(strcmp("/exit",input)==0){
         clearScreen();
         _Exit(1337);
-        }
+    }
     else{
         printf("\x1b[31mНеизвестная команда!\x1b[0m\n");
         sleep(2);
@@ -227,7 +219,6 @@ void menu(){
 int main() {
     //setlocale(LC_ALL, "utf-8");
     srand(time(NULL));
-    //menu();
-    startGame();
+    menu();
 
 }
